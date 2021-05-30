@@ -11,6 +11,7 @@ function generateRandomNumbers(x){
     
     return a;
 }
+
 function scrambleArray(x){
     const y = [];
     //var i = 0;
@@ -20,9 +21,8 @@ function scrambleArray(x){
         if(y.indexOf(numberToBeAdded) < 0){
             y.push(numberToBeAdded);
         }
-        console.log("?" + y);
+        
     }
-
     return y;
 }
 
@@ -31,39 +31,67 @@ const Board = (props) =>{
     const n = parseInt(props.spaces);
     const [selections, setSelections] = useState(generateRandomNumbers(n));
     
+    const [score, setScore] = useState(0);
+
     
 
-    useEffect(() =>{
-        // const a = generateRandomNumbers(n);
-        // const b = scrambleArray(a);
-
-
-        // console.log("arrray a " + a);
-        // console.log("arrray b " + b);
-        console.log(selections)
-        const a = [0,0,0,0];
+    useEffect( ()=>{
         setSelections(scrambleArray(selections));
-
-        //setSelections(generateRandomNumbers(n));
-        //console.log("selecstions before scramble: " + selections);
-        //setSelections(scrambleArray(selections)); 
-        console.log("selections after scramble: " + selections);
     },
-    []
-    
+    [score]
     )
-    console.log("selections after effect: " + selections);
+
+    const [clicked, setClicked] = useState([]);
+
+    const handleClick = (e) =>{
+
+        
+
+        var a = clicked;
+        const b = selections[e.target.id];
+
+        if (clicked.indexOf(b) < 0  ){
+            a.push(selections[e.target.id]);
+            setClicked(a);
+            setScore(score+1);
+            props.getScore(score);
+        }else{
+            console.log("you lose!!!");
+            setScore(0);
+            setSelections(generateRandomNumbers(n));
+            const w = [];
+            setClicked(w);
+        }
+
+        
+       
+
+        
+        
+
+        
+        console.log(clicked);
+    }
+
+    const cards = [];
+    var i = 0;
+    for(i = 0; i < n; i++){
+        cards.push( <button id={i} onClick={handleClick}> {parseInt(selections[i])} </button>  );
+    }
+
+
 
     return(
         <div>
             <h1>
-                {n}
+               Difficulty:  {n}
+               
                
             </h1>
-            <Card symbol = {parseInt(selections[0])}  />
-            <Card symbol = {parseInt(selections[1])}  />
-            <Card symbol = {parseInt(selections[2])}  />
-            <Card symbol = {parseInt(selections[3])}  />
+            <h1>
+                Score: {score}
+            </h1>
+            {cards}
         </div>
 
     )
